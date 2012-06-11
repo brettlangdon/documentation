@@ -1,0 +1,166 @@
+--- 
+title: Alerts
+---
+
+<p>Create, modify, and delete metric alert rules.</p>
+
+<h3>Authentication</h3>
+
+<p>Full access. (see <a href="/authentication/">Authentication</a>)</p>
+
+<h2>Create new alert</h2>
+
+<h3>Request</h3>
+
+<%= request "POST",  "/api/v1/alert" %>
+
+<%= request_headers 'Content-Type' => 'application/json' %>
+<%= http_body <<eos
+{
+  "query": "sum(last_1d):sum:system.net.bytes_rcvd{host:host0} > 100",
+  "name": "Bytes received on host0",
+  "message": "We may need to add web hosts if this is consistently high."
+}
+eos
+%>
+
+<p>The <code>name</code> and <code>message</code> parameters are optional. If <code>name</code> is unset, it defaults to the bare query string.</p>
+
+<h3>Response</h3>
+
+<%= response_headers 201, 'Content-Type' => 'application/json' %>
+<%= http_body <<eos
+{
+  "id": 1234,
+  "query": "sum(last_1d):sum:system.net.bytes_rcvd{host:host0} > 100",
+  "name": "Bytes received on host0",
+  "message": "We may need to add web hosts if this is consistently high."
+}
+eos
+%>
+
+<h2>Create new alert with email notification</h2>
+
+<h3>Request</h3>
+
+<%= request "POST",  "/api/v1/alert" %>
+
+<%= request_headers 'Content-Type' => 'application/json' %>
+<%= http_body <<eos
+{
+  "query": "sum(last_1d):sum:system.net.bytes_rcvd{host:host0} > 100",
+  "name": "Bytes received on host0",
+  "message": "@matt, take a look at this if it goes off."
+}
+eos
+%>
+
+<p>The <code>message</code> parameter can contain user handle mentions (e.g. <code>@matt</code>), which cause users to receive email notifications. They function just as they do in event comments.</p>
+
+<p>The <code>name</code> and <code>message</code> parameters are optional. If <code>name</code> is unset, it defaults to the bare query string.</p>
+
+<h3>Response</h3>
+
+<%= response_headers 201, 'Content-Type' => 'application/json' %>
+<%= http_body <<eos
+{
+  "id": 1234,
+  "query": "sum(last_1d):sum:system.net.bytes_rcvd{host:host0} > 100",
+  "name": "Bytes received on host0",
+  "message": "@matt, take a look at this if it goes off."
+}
+eos
+%>
+
+<h2>Update an existing alert</h2>
+
+<h3>Request</h3>
+
+<%= request "PUT",  "/api/v1/alert/:alert_id" %>
+
+<%= request_headers 'Content-Type' => 'application/json' %>
+<%= http_body <<eos
+{
+  "query": "sum(last_1d):sum:system.net.bytes_rcvd{host:host0} > 100",
+  "name": "Bytes received on host0",
+  "message": "We may need to add web hosts if this is consistently high. (UPDATED)"
+}
+eos
+%>
+
+<p>The alert with the id indicated by <code>:alert_id</code> will be replaced with the new event. Omitting optional fields will clear them.</p>
+
+<h3>Response</h3>
+
+<%= response_headers 200, 'Content-Type' => 'application/json' %>
+<%= http_body <<eos
+{
+  "id": 1234,
+  "query": "sum(last_1d):sum:system.net.bytes_rcvd{host:host0} > 100",
+  "name": "Bytes received on host0",
+  "message": "We may need to add web hosts if this is consistently high. (UPDATED)"
+}
+eos
+%>
+
+<h2>List all alerts</h2>
+
+<h3>Request</h3>
+
+<%= request "GET",  "/api/v1/alert" %>
+
+<h3>Response</h3>
+
+<%= response_headers 200, 'Content-Type' => 'application/json' %>
+<%= http_body <<eos
+{
+  alerts: [
+    {
+      id: 1234,
+      query: "sum(last_1d):sum:system.net.bytes_rcvd{host:host0} > 100",
+      message: "@matt, take a look at this if it goes off.",
+      name: "Bytes received on host0"
+    }
+  ]
+}
+eos
+%>
+
+<h2>Show a single alert</h2>
+
+<h3>Request</h3>
+
+<%= request "GET",  "/api/v1/alert/:alert_id" %>
+
+<h3>Response</h3>
+
+<%= response_headers 200, 'Content-Type' => 'application/json' %>
+<%= http_body <<eos
+{
+  id: 1234,
+  query: "sum(last_1d):sum:system.net.bytes_rcvd{host:host0} > 100",
+  message: "@matt, take a look at this if it goes off.",
+  name: "Bytes received on host0"
+}
+eos
+%>
+
+<h2>Delete an alert</h2>
+
+<h3>Request</h3>
+
+<%= request "DELETE",  "/api/v1/alert/:alert_id" %>
+
+<h3>Response</h3>
+
+<%= response_headers 200, 'Content-Type' => 'application/json' %>
+<%= http_body <<eos
+{
+  query: "sum(last_1d):sum:system.net.bytes_rcvd{host:host0} > 100",
+  message: "@matt, take a look at this if it goes off.",
+  name: "Bytes received on host0"
+}
+eos
+%>
+
+On successful deletion, the deleted content is returned.
