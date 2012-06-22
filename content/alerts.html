@@ -164,3 +164,25 @@ eos
 %>
 
 On successful deletion, the deleted content is returned.
+
+<h2>Mute all alerting for your org</h2>
+
+<h3>Request</h3>
+
+<%= request "POST",  "/api/v1/mute_alerts" %>
+
+<h3>Response</h3>
+
+<%= response_headers 204 %>
+
+Muting alerts will cause all forms of notification to cease (events, emails, etc.), but state changes will continue to be evaluated.
+
+<h2>Unmute all alerting for your org</h2>
+
+<h3>Request</h3>
+
+<%= request "POST",  "/api/v1/unmute_alerts" %>
+
+<h3>Response</h3>
+
+<%= response_headers 204 %>
